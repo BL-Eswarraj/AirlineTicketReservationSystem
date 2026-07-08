@@ -1,6 +1,7 @@
 
 import java.util.Scanner;
 import model.Passenger;
+import model.Traveler;
 import service.PassengerService;
 import service.SessionService;
 import util.OTPUtil;
@@ -14,7 +15,12 @@ public class Main {
     private static final int UPDATE_PROFILE = 4;
     private static final int DELETE_ACCOUNT = 5;
     private static final int VIEW_PROFILE = 6;
-    private static final int EXIT = 7;
+    private static final int ADD_TRAVELER = 7;
+    private static final int VIEW_TRAVELERS = 8;
+    private static final int SET_TRAVEL_PREFERENCES = 9;
+    private static final int COMMUNICATION_PREFERENCES = 10;
+    private static final int EMERGENCY_CONTACT = 11;
+    private static final int EXIT = 12;
 
     public static void main(String[] args) {
 
@@ -34,7 +40,14 @@ public class Main {
             System.out.println("4. UPDATE PROFILE");
             System.out.println("5. DELETE ACCOUNT");
             System.out.println("6. VIEW PROFILE");
-            System.out.println("7. LOGOUT");
+            System.out.println("7. ADD TRAVELERS");
+            System.out.println("8. VIEW TRAVELERS");
+            System.out.println("9. SET TRAVEL PREFERENCES");
+            System.out.println("10. COMMUNICATION PREFERENCES");
+            System.out.println("11. EMERGENCY CONTACT");
+            System.out.println("12. LOGOUT");
+
+            //Communication Preferences
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -190,6 +203,144 @@ public class Main {
 
                     break;
 
+                case ADD_TRAVELER:
+
+                    System.out.println("\nAdd Traveler");
+
+                    String passengerEmail = ValidationUtil.readEmail(scanner);
+
+                    String travelerName = ValidationUtil.readName(scanner);
+
+                    String travelerDOB = ValidationUtil.readDateOfBirth(scanner);
+
+                    String travelerPassport = ValidationUtil.readPassportNumber(scanner);
+
+                    Traveler traveler = new Traveler(
+                            travelerName,
+                            travelerDOB,
+                            travelerPassport);
+
+                    boolean added = passengerService.addTraveler(passengerEmail, traveler);
+
+                    if (added) {
+                        System.out.println("Traveler Added Successfully.");
+                    } else {
+                        System.out.println("Passenger Not Found.");
+                    }
+
+                    break;
+                case VIEW_TRAVELERS:
+
+                    System.out.println("\nView Travelers");
+
+                    String travelerEmail = ValidationUtil.readEmail(scanner);
+
+                    passenger = passengerService.viewTravelers(travelerEmail);
+
+                    if (passenger != null) {
+
+                        if (passenger.getTravelers().isEmpty()) {
+
+                            System.out.println("No Travelers Added.");
+
+                        } else {
+
+                            System.out.println("\nTraveler List");
+
+                            for (Traveler t : passenger.getTravelers()) {
+
+                                System.out.println("-----------------------");
+                                System.out.println("Name : " + t.getFullName());
+                                System.out.println("DOB : " + t.getDateOfBirth());
+                                System.out.println("Passport : " + t.getPassportNumber());
+
+                            }
+
+                        }
+
+                    } else {
+
+                        System.out.println("Passenger Not Found.");
+
+                    }
+
+                    break;
+                case SET_TRAVEL_PREFERENCES:
+
+                    System.out.println("\nSet Travel Preferences");
+
+                    String preferenceEmail = ValidationUtil.readEmail(scanner);
+
+                    System.out.print("Enter Meal Type (Veg/Non-Veg/Jain): ");
+                    String mealType = scanner.nextLine();
+
+                    System.out.print("Enter Seat Preference (Window/Aisle/Middle): ");
+                    String seatPreference = scanner.nextLine();
+
+                    System.out.print("Enter Special Assistance (None/Wheelchair/etc.): ");
+                    String specialAssistance = scanner.nextLine();
+
+                    updated = passengerService.setTravelPreferences(
+                            preferenceEmail,
+                            mealType,
+                            seatPreference,
+                            specialAssistance);
+
+                    if (updated) {
+                        System.out.println("Travel Preferences Updated Successfully.");
+                    } else {
+                        System.out.println("Passenger Not Found.");
+                    }
+
+                    break;
+                case COMMUNICATION_PREFERENCES:
+
+                    System.out.println("\nCommunication Preferences");
+
+                    preferenceEmail = ValidationUtil.readEmail(scanner);
+
+                    System.out.print("Enable Email Notifications (true/false): ");
+                    boolean emailNotification = scanner.nextBoolean();
+
+                    System.out.print("Enable SMS Notifications (true/false): ");
+                    boolean smsNotification = scanner.nextBoolean();
+                    scanner.nextLine(); // Consume newline
+
+                    updated = passengerService.setCommunicationPreferences(
+                            preferenceEmail,
+                            emailNotification,
+                            smsNotification);
+
+                    if (updated) {
+                        System.out.println("Communication Preferences Updated Successfully.");
+                    } else {
+                        System.out.println("Passenger Not Found.");
+                    }
+
+                    break;
+                case EMERGENCY_CONTACT:
+
+                    System.out.println("\nEmergency Contact");
+
+                    email = ValidationUtil.readEmail(scanner);
+
+                    System.out.print("Enter Emergency Contact Name: ");
+                    String contactName = scanner.nextLine();
+
+                    String contactNumber = ValidationUtil.readPhoneNumber(scanner);
+
+                    added = passengerService.addEmergencyContact(
+                            email,
+                            contactName,
+                            contactNumber);
+
+                    if (added) {
+                        System.out.println("Emergency Contact Added Successfully.");
+                    } else {
+                        System.out.println("Passenger Not Found.");
+                    }
+
+                    break;
                 case EXIT:
                     System.out.println("Thank you for using AirLine Reservation System.");
                     return;

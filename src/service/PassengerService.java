@@ -1,6 +1,7 @@
 package service;
 
 import model.Passenger;
+import model.Traveler;
 import repository.PassengerRepository;
 
 public class PassengerService {
@@ -70,5 +71,76 @@ public class PassengerService {
 
         return passengerRepository.findByEmail(email);
 
+    }
+
+    //Add Traveller
+    public boolean addTraveler(String email, Traveler traveler) {
+
+        Passenger passenger = passengerRepository.findByEmail(email);
+
+        if (passenger == null) {
+            return false;
+        }
+
+        passenger.addTraveler(traveler);
+
+        return true;
+    }
+
+    public Passenger viewTravelers(String email) {
+
+        return passengerRepository.findByEmail(email);
+
+    }
+
+    public boolean setTravelPreferences(String email,
+            String mealType,
+            String seatPreference,
+            String specialAssistance) {
+
+        Passenger passenger = passengerRepository.findByEmail(email);
+
+        if (passenger == null) {
+            return false;
+        }
+
+        passenger.setMealType(mealType);
+        passenger.setSeatPreference(seatPreference);
+        passenger.setSpecialAssistance(specialAssistance);
+
+        return true;
+    }
+
+    public boolean setCommunicationPreferences(String email,
+            boolean emailNotification,
+            boolean smsNotification) {
+
+        Passenger passenger = passengerRepository.findByEmail(email);
+
+        if (passenger == null) {
+            return false;
+        }
+
+        passenger.setEmailNotification(emailNotification);
+        passenger.setSmsNotification(smsNotification);
+
+        return true;
+    }
+
+    //Emergency Contact
+    public boolean addEmergencyContact(String email,
+            String contactName,
+            String contactNumber) {
+
+        Passenger passenger = passengerRepository.findByEmail(email);
+
+        if (passenger == null) {
+            return false;
+        }
+
+        passenger.setEmergencyContactName(contactName);
+        passenger.setEmergencyContactNumber(contactNumber);
+
+        return true;
     }
 }
